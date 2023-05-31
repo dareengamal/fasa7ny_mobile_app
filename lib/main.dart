@@ -60,7 +60,7 @@ import 'package:fasa7ny/screens/tabsControllerScreen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -75,9 +75,9 @@ void main() async {
   //
   runApp(const MyApp());
   void initState() {
-    // final fbm = FirebaseMessaging.instance;
-    // fbm.requestPermission();
-    // fbm.subscribeToTopic("classChat");
+    final fbm = FirebaseMessaging.instance;
+    fbm.requestPermission();
+    fbm.subscribeToTopic("classChat");
   }
 }
 

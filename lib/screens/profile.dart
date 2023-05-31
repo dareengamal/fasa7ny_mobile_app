@@ -6,9 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../utils/colors_utils.dart';
+import 'navigationbar.dart';
+import 'favorite.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -29,6 +31,15 @@ class _ProfileState extends State<Profile> {
     super.dispose();
   }
 
+  bool isUserLoggedIn = false;
+  void checkUserLoginStatus() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = await auth.currentUser;
+    setState(() {
+      isUserLoggedIn = user != null; // Update the login status
+    });
+  }
+
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();
     final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
@@ -37,6 +48,24 @@ class _ProfileState extends State<Profile> {
       setState(() {
         _image = File(pickedFile.path);
       });
+    }
+  }
+
+  Future<dynamic> getImages(int index) async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user = await auth.currentUser;
+
+      final DocumentReference _users =
+          FirebaseFirestore.instance.collection('users').doc(user!.uid);
+      DocumentSnapshot snapshot = await _users.get();
+      dynamic attributeValue = snapshot['posts'];
+      if (attributeValue.length == 0) {
+        return "error";
+      }
+      return attributeValue['image'];
+    } catch (err) {
+      return "error";
     }
   }
 
@@ -72,8 +101,35 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  int _currentIndex = 0;
+  void _onTabTapped(int index) {
+    if (index == 3) {
+      navigateToProfileScreen(context);
+    } else {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
+  }
+
+  void navigateToProfileScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Profile()),
+    );
+  }
+
+  void navigateToFavouriteScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FavoriteScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
     final profileProvider = Provider.of<ProfileProvider>(context);
     final userName = profileProvider.userName;
     final userBio = profileProvider.userBio;
@@ -88,6 +144,12 @@ class _ProfileState extends State<Profile> {
       0.5,
     );
     return Scaffold(
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        backgroundColor: Colors.red,
+        isDarkMode: false,
+      ),
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: backgroundColor,
@@ -98,113 +160,152 @@ class _ProfileState extends State<Profile> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(height: 15),
-              GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 48,
-                  backgroundImage: _image != null ? FileImage(_image!) : null,
-                  child: _image == null
-                      ? Icon(Icons.account_circle, size: 96)
-                      : null,
-                ),
-              ),
-              SizedBox(height: 10),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextFormField(
-                        controller: _nameController..text = userName,
-                        decoration: InputDecoration(labelText: 'Name'),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextFormField(
-                        controller: _bioController..text = userBio,
-                        decoration: InputDecoration(labelText: 'Bio'),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your bio';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () =>
-                          _uploadImageAndUpdateProfile(profileProvider),
-                      child: Text('Update Profile'),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                userName,
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(height: 10),
-              Text(
-                userBio,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      Text("2"),
-                      Text("Posts"),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.7,
-                height: 180,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  image: DecorationImage(
-                    image: AssetImage("assets/pyramid1.jpg"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.7,
-                height: 180,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  image: DecorationImage(
-                    image: AssetImage("assets/pyramid1.jpg"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ],
+      body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                hexStringToColor("E59400"),
+                hexStringToColor("FFE5B4"),
+                hexStringToColor("C37F00"),
+              ],
+            ),
           ),
-        ),
-      ),
+          child: user!.uid != Null
+              ? SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 15),
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 48,
+                            backgroundImage:
+                                _image != null ? FileImage(_image!) : null,
+                            child: _image == null
+                                ? Icon(Icons.account_circle, size: 96)
+                                : null,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: TextFormField(
+                                  controller: _nameController..text = userName,
+                                  decoration:
+                                      InputDecoration(labelText: 'Name'),
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter your name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: TextFormField(
+                                  controller: _bioController..text = userBio,
+                                  decoration: InputDecoration(labelText: 'Bio'),
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter your bio';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () => _uploadImageAndUpdateProfile(
+                                    profileProvider),
+                                child: Text('Update Profile'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          userName,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          userBio,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                Text("2"),
+                                Text("Posts"),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 300,
+                          child: Expanded(
+                            child: ListView.builder(
+                              itemCount: 5,
+                              itemBuilder: (context, index) {
+                                if (getImages(index) != null &&
+                                    getImages(index) != 'error') {
+                                  return FutureBuilder(
+                                    future: getImages(index),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Container(); // Return empty container while waiting for data
+                                      }
+                                      if (snapshot.hasData) {
+                                        return Container(
+                                          child: Text(snapshot.data),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.7,
+                                          height: 180,
+                                          padding: EdgeInsets.only(
+                                              top: 7, bottom: 7),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            image: DecorationImage(
+                                              image:
+                                                  NetworkImage(snapshot.data),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        return Container(); // Handle error case
+                                      }
+                                    },
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : AlertDialog(
+                  title: Text("You need to sign in !"),
+                )),
     );
   }
 

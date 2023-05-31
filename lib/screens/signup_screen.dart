@@ -90,7 +90,6 @@ import 'package:flutter/material.dart';
 import '../utils/colors_utils.dart';
 import 'package:provider/provider.dart';
 
-
 import 'home_Screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -202,6 +201,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         backgroundColor: Colors.amber,
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      final snackBar = SnackBar(
+                        content: Text(
+                            "YOU HAVE EXCEEDED NUMBER OF ATTEMPTS TRY AGAIN LATER"),
+                        backgroundColor: Colors.amber,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
                   });
                 }),
@@ -210,7 +216,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     "Enter as a guest",
                     style: TextStyle(color: Colors.white70),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  },
                 )
               ],
             ),
@@ -218,4 +229,3 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
-

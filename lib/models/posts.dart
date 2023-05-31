@@ -1,5 +1,4 @@
 import 'appUser.dart';
-import 'comment.dart';
 
 class Post {
   final String postID;
@@ -7,7 +6,7 @@ class Post {
   String title;
   String description;
   double avg_review;
-  List<Comment> comments;
+  List<dynamic> comments;
   String imageUrl;
   Post(
       {required this.postID,
@@ -16,6 +15,6 @@ class Post {
       required this.imageUrl,
       this.description: "",
       this.avg_review: 0,
-      List<Comment>? comments})
+      List<dynamic>? comments})
       : comments = comments ?? [];
 }

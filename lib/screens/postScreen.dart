@@ -17,13 +17,16 @@
 //   }
 // }
 import 'package:fasa7ny/screens/service/idProvider.dart';
-
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'navigationbar.dart';
+import 'profile.dart';
+import 'favorite.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({super.key});
@@ -84,13 +87,19 @@ class _PostScreenState extends State<PostScreen> {
 //     });
 //   }
 
+  Color hexStringToColor(String hexColor) {
+    final buffer = StringBuffer();
+    if (hexColor.length == 6 || hexColor.length == 7) buffer.write('ff');
+    buffer.write(hexColor.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
+  }
+
   void myAlert() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor:
-                const Color.fromARGB(255, 180, 109, 58), // Background color
+            backgroundColor: hexStringToColor("E59400"), // Background color
 
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -137,10 +146,41 @@ class _PostScreenState extends State<PostScreen> {
         });
   }
 
+  int _currentIndex = 0;
+  void _onTabTapped(int index) {
+    if (index == 3) {
+      navigateToProfileScreen(context);
+    } else {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
+  }
+
+  void navigateToProfileScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Profile()),
+    );
+  }
+
+  void navigateToFavouriteScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FavoriteScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileProvider = Provider.of<IdProvider>(context);
     return Scaffold(
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        backgroundColor: Colors.red,
+        isDarkMode: false,
+      ),
       backgroundColor: const Color.fromARGB(255, 180, 109, 58),
       body: Center(
         child: SingleChildScrollView(
@@ -206,6 +246,11 @@ class _PostScreenState extends State<PostScreen> {
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(50)),
                       ),
+                      keyboardType: TextInputType.text,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter(RegExp(r'[a-zA-Z]'),
+                            allow: true)
+                      ],
                     ),
               const SizedBox(
                 height: 20,
@@ -221,6 +266,10 @@ class _PostScreenState extends State<PostScreen> {
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(50)),
                 ),
+                keyboardType: TextInputType.text,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter(RegExp(r'[a-zA-Z]'), allow: true)
+                ],
               ),
               const SizedBox(
                 height: 20,
@@ -271,7 +320,7 @@ class _PostScreenState extends State<PostScreen> {
                       "name": name.text,
                       "description": description.text,
                       "category": dropdownValue,
-                      "image": image!.path,
+                      "image": "http://" + image!.path,
                       "rating": [0],
                       "coment": [],
                       'user': profileProvider.uid

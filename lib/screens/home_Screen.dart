@@ -3,8 +3,6 @@
 // import 'package:fasa7ny/screens/profile.dart';
 // import 'package:flutter/material.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:provider/provider.dart';
-
 // import '../models/posts.dart';
 // import '../utils/colors_utils.dart';
 // import 'navigationbar.dart';
@@ -18,7 +16,6 @@
 // }
 
 // class _HomeScreenState extends State<HomeScreen> {
-
 //   List<bool> isFavoriteList = []; // Add this line to define the isFavoriteList
 
 //   List<String> strs = [
@@ -31,7 +28,7 @@
 //     'art galleries'
 //   ];
 
-//   addToFavorite(String postId) async {
+//   addToFavorite(String postId, int index) async {
 //     print(widget.uid);
 //     DocumentReference documentRef =
 //         FirebaseFirestore.instance.collection("users").doc(widget.uid);
@@ -39,6 +36,10 @@
 //     List<dynamic> myList = snapshot['favorites'];
 //     List<dynamic> updatedList = [...myList, postId];
 //     documentRef.update({'favorites': updatedList});
+//     setState(() {
+//       isFavoriteList[index] = !isFavoriteList[index];
+//     });
+//     print('Heart button clicked');
 //   }
 
 //   bool isDarkMode = false;
@@ -126,13 +127,16 @@
 //                       padding: const EdgeInsets.only(top: 40, left: 20),
 //                       child: Row(
 //                         children: [
-//                           const Icon(Icons.search, size: 30, color: Colors.white),
+//                           const Icon(Icons.search,
+//                               size: 30, color: Colors.white),
 //                           Expanded(
 //                             child: Container(),
 //                           ),
 //                           IconButton(
 //                             icon: Icon(
-//                               isDarkMode ? Icons.brightness_7 : Icons.brightness_4,
+//                               isDarkMode
+//                                   ? Icons.brightness_7
+//                                   : Icons.brightness_4,
 //                             ),
 //                             onPressed: () {
 //                               setState(() {
@@ -173,31 +177,32 @@
 //                       height: 120,
 //                       width: double.maxFinite,
 //                       margin: const EdgeInsets.only(left: 20),
-//                       child: ListView.builder(
-//                         itemCount: 6,
-//                         scrollDirection: Axis.horizontal,
-//                         itemBuilder: (_, index) {
-//                           return Column(
-//                             children: [
-//                               Container(
-//                                 margin: const EdgeInsets.only(right: 50, top: 10),
-//                                 width: 147,
-//                                 height: 29,
-//                                 decoration: BoxDecoration(
-//                                   borderRadius: BorderRadius.circular(50),
-//                                   color: Colors.white,
-//                                 ),
-//                                 child: Center(
-//                                   child: Text(
-//                                     documentSnapshot.docs[index]['category'],
-//                                     textAlign: TextAlign.center,
-//                                   ),
-//                                 ),
-//                               )
-//                             ],
-//                           );
-//                         },
-//                       ),
+//                       //   child: ListView.builder(
+//                       //     itemCount: 6,
+//                       //     scrollDirection: Axis.horizontal,
+//                       //     itemBuilder: (_, index) {
+//                       //       return Column(
+//                       //         children: [
+//                       //           Container(
+//                       //             margin:
+//                       //                 const EdgeInsets.only(right: 50, top: 10),
+//                       //             width: 147,
+//                       //             height: 29,
+//                       //             decoration: BoxDecoration(
+//                       //               borderRadius: BorderRadius.circular(50),
+//                       //               color: Colors.white,
+//                       //             ),
+//                       //             child: Center(
+//                       //               child: Text(
+//                       //                 documentSnapshot.docs[index]['category'],
+//                       //                 textAlign: TextAlign.center,
+//                       //               ),
+//                       //             ),
+//                       //           )
+//                       //         ],
+//                       //       );
+//                       //     },
+//                       //   ),
 //                     ),
 //                     const SizedBox(
 //                       height: 10,
@@ -236,23 +241,27 @@
 //                           final DocumentSnapshot documentSnapshot =
 //                               streamSnapshot.data!.docs[index];
 //                           num avgRating = 0;
-//                           for (num i = 0; i < documentSnapshot['rating'].length; i++) {
+//                           for (num i = 0;
+//                               i < documentSnapshot['rating'].length;
+//                               i++) {
 //                             avgRating += documentSnapshot['rating'][i];
 //                           }
 
-//                            // Add this line to initialize isFavorite for each post
-//                       if (isFavoriteList.length <= index) {
-//                         isFavoriteList.add(false);
-//                       }
+//                           // Add this line to initialize isFavorite for each post
+//                           if (isFavoriteList.length <= index) {
+//                             isFavoriteList.add(false);
+//                           }
 
 //                           return GestureDetector(
-//                             onTap: () => navigateToPage(context, documentSnapshot),
+//                             onTap: () =>
+//                                 navigateToPage(context, documentSnapshot),
 //                             child: Row(
 //                               children: [
 //                                 Container(
 //                                   padding: const EdgeInsets.symmetric(
 //                                       horizontal: 10, vertical: 10),
-//                                   margin: const EdgeInsets.only(right: 50, top: 10),
+//                                   margin:
+//                                       const EdgeInsets.only(right: 50, top: 10),
 //                                   width: 231,
 //                                   height: 364,
 //                                   decoration: BoxDecoration(
@@ -260,7 +269,8 @@
 //                                     color: Colors.white,
 //                                     image: DecorationImage(
 //                                       image: NetworkImage(
-//                                         documentSnapshot['image'].replaceAll("\n", ""),
+//                                         documentSnapshot['image']
+//                                             .replaceAll("\n", ""),
 //                                       ),
 //                                       fit: BoxFit.cover,
 //                                     ),
@@ -268,41 +278,44 @@
 //                                   child: Column(
 //                                     children: [
 //                                       Row(
-//                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                                         mainAxisAlignment:
+//                                             MainAxisAlignment.spaceBetween,
 //                                         children: <Widget>[
-//                                            GestureDetector(
-//                                           onTap: () {
-//                                             setState(() {
-//                                               isFavoriteList[index] = !isFavoriteList[index];
-//                                             });
-//                                             print('Heart button clicked');
-//                                           },
-//                                           child: Container(
-//                                             child: Align(
-//                                               alignment: Alignment.topLeft,
-//                                               child: Icon(
-//                                                 isFavoriteList[index]
-//                                                     ? Icons.favorite
-//                                                     : Icons.favorite_border,
-//                                                 color: isFavoriteList[index]
-//                                                     ? Colors.redAccent
-//                                                     : null,
+//                                           GestureDetector(
+//                                             onTap: () {},
+//                                             child: Container(
+//                                               child: Align(
+//                                                 alignment: Alignment.topLeft,
+//                                                 child: Icon(
+//                                                   isFavoriteList[index]
+//                                                       ? Icons.favorite
+//                                                       : Icons.favorite_border,
+//                                                   color: isFavoriteList[index]
+//                                                       ? Colors.redAccent
+//                                                       : null,
+//                                                 ),
 //                                               ),
 //                                             ),
 //                                           ),
-//                                         ),
 //                                           Container(
 //                                             padding: EdgeInsets.all(10),
 //                                             alignment: Alignment.center,
 //                                             decoration: BoxDecoration(
-//                                               borderRadius: BorderRadius.circular(10),
-//                                               color: Colors.grey.withOpacity(0.5),
+//                                               borderRadius:
+//                                                   BorderRadius.circular(10),
+//                                               color:
+//                                                   Colors.grey.withOpacity(0.5),
 //                                             ),
 //                                             child: Row(
-//                                               mainAxisAlignment: MainAxisAlignment.center,
+//                                               mainAxisAlignment:
+//                                                   MainAxisAlignment.center,
 //                                               children: [
 //                                                 Text(
-//                                                   (avgRating / documentSnapshot['rating'].length).toStringAsFixed(1),
+//                                                   (avgRating /
+//                                                           documentSnapshot[
+//                                                                   'rating']
+//                                                               .length)
+//                                                       .toStringAsFixed(1),
 //                                                   style: TextStyle(
 //                                                     color: Colors.white,
 //                                                     fontSize: 20,
@@ -321,9 +334,11 @@
 //                                       ),
 //                                       Expanded(
 //                                         child: Align(
-//                                           alignment: FractionalOffset.bottomCenter,
+//                                           alignment:
+//                                               FractionalOffset.bottomCenter,
 //                                           child: Padding(
-//                                             padding: EdgeInsets.only(bottom: 10.0),
+//                                             padding:
+//                                                 EdgeInsets.only(bottom: 10.0),
 //                                             child: Text(
 //                                               documentSnapshot['name'],
 //                                               style: TextStyle(
@@ -354,17 +369,21 @@
 //                           final DocumentSnapshot documentSnapshot =
 //                               streamSnapshot.data!.docs[index];
 //                           num avgRating = 0;
-//                           for (num i = 0; i < documentSnapshot['rating'].length; i++) {
+//                           for (num i = 0;
+//                               i < documentSnapshot['rating'].length;
+//                               i++) {
 //                             avgRating += documentSnapshot['rating'][i];
 //                           }
 
 //                           return GestureDetector(
-//                             onTap: () => navigateToPage(context, documentSnapshot),
+//                             onTap: () =>
+//                                 navigateToPage(context, documentSnapshot),
 //                             child: Center(
 //                               child: Column(
 //                                 children: [
 //                                   Container(
-//                                     margin: EdgeInsets.only(top: 10, bottom: 10),
+//                                     margin:
+//                                         EdgeInsets.only(top: 10, bottom: 10),
 //                                     width: 300,
 //                                     height: 364,
 //                                     decoration: BoxDecoration(
@@ -380,45 +399,50 @@
 //                                     child: Column(
 //                                       children: [
 //                                         Row(
-//                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                                           mainAxisAlignment:
+//                                               MainAxisAlignment.spaceBetween,
 //                                           children: <Widget>[
-//                                                   GestureDetector(
-//                                           onTap: () {
-//                                             setState(() {
-//                                               isFavoriteList[index] = !isFavoriteList[index];
-//                                             });
-//                                             print('Heart button clicked');
-//                                           },
-//                                           child: Container(
-//                                             child: Align(
-//                                               alignment: Alignment.topLeft,
-//                                               child: Icon(
-//                                                 isFavoriteList[index]
-//                                                     ? Icons.favorite
-//                                                     : Icons.favorite_border,
-//                                                 color: isFavoriteList[index]
-//                                                     ? Colors.redAccent
-//                                                     : null,
+//                                             GestureDetector(
+//                                               onTap: () => addToFavorite(
+//                                                   documentSnapshot.id, index),
+//                                               child: Container(
+//                                                 child: Align(
+//                                                   alignment: Alignment.topLeft,
+//                                                   child: Icon(
+//                                                     isFavoriteList[index]
+//                                                         ? Icons.favorite
+//                                                         : Icons.favorite_border,
+//                                                     color: isFavoriteList[index]
+//                                                         ? Colors.redAccent
+//                                                         : null,
+//                                                   ),
+//                                                 ),
 //                                               ),
 //                                             ),
-//                                           ),
-//                                         ),
 //                                             Container(
 //                                               padding: EdgeInsets.all(10),
 //                                               alignment: Alignment.center,
 //                                               decoration: BoxDecoration(
-//                                                 borderRadius: BorderRadius.circular(10),
-//                                                 color: Colors.grey.withOpacity(0.5),
+//                                                 borderRadius:
+//                                                     BorderRadius.circular(10),
+//                                                 color: Colors.grey
+//                                                     .withOpacity(0.5),
 //                                               ),
 //                                               child: Row(
-//                                                 mainAxisAlignment: MainAxisAlignment.center,
+//                                                 mainAxisAlignment:
+//                                                     MainAxisAlignment.center,
 //                                                 children: [
 //                                                   Text(
-//                                                     (avgRating / documentSnapshot['rating'].length).toStringAsFixed(1),
+//                                                     (avgRating /
+//                                                             documentSnapshot[
+//                                                                     'rating']
+//                                                                 .length)
+//                                                         .toStringAsFixed(1),
 //                                                     style: TextStyle(
 //                                                       color: Colors.white,
 //                                                       fontSize: 20,
-//                                                       fontWeight: FontWeight.bold,
+//                                                       fontWeight:
+//                                                           FontWeight.bold,
 //                                                     ),
 //                                                   ),
 //                                                   SizedBox(width: 1),
@@ -433,11 +457,13 @@
 //                                         ),
 //                                         Expanded(
 //                                           child: Align(
-//                                             alignment: FractionalOffset.bottomCenter,
+//                                             alignment:
+//                                                 FractionalOffset.bottomCenter,
 //                                             child: Padding(
-//                                               padding: EdgeInsets.only(bottom: 10.0),
-//                                               child: Text(documentSnapshot['name']
-//                                                 ,
+//                                               padding:
+//                                                   EdgeInsets.only(bottom: 10.0),
+//                                               child: Text(
+//                                                 documentSnapshot['name'],
 //                                                 style: TextStyle(
 //                                                   fontSize: 20,
 //                                                   color: Colors.white,
@@ -471,24 +497,26 @@
 // }
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fasa7ny/screens/favorite.dart';
-import 'package:fasa7ny/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:provider/provider.dart';
+
 import '../models/posts.dart';
-import '../utils/colors_utils.dart';
+import 'favorite.dart';
 import 'navigationbar.dart';
+import 'profile.dart';
+import 'package:fasa7ny/utils/colors_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   final String uid;
   const HomeScreen({Key? key, this.uid: ""}) : super(key: key);
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-  void initState() {}
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<bool> isFavoriteList = []; // Add this line to define the isFavoriteList
+  List<bool> isFavoriteList = [];
 
   List<String> strs = [
     "activities",
@@ -499,20 +527,12 @@ class _HomeScreenState extends State<HomeScreen> {
     'museums',
     'art galleries'
   ];
-
-  addToFavorite(String postId) async {
-    print(widget.uid);
-    DocumentReference documentRef =
-        FirebaseFirestore.instance.collection("users").doc(widget.uid);
-    DocumentSnapshot snapshot = await documentRef.get();
-    List<dynamic> myList = snapshot['favorites'];
-    List<dynamic> updatedList = [...myList, postId];
-    documentRef.update({'favorites': updatedList});
-  }
+  List<String> _inactiveChips = [];
+  List<String> _activeChips = [];
 
   bool isDarkMode = false;
   int _currentIndex = 0;
-  // List<String> favoritePosts = [];
+  List<String> favoritePosts = [];
 
   void _onTabTapped(int index) {
     if (index == 3) {
@@ -542,11 +562,11 @@ class _HomeScreenState extends State<HomeScreen> {
       BuildContext myContext, DocumentSnapshot<Object?> documentSnapshot) {
     Navigator.of(myContext).pushNamed('/postPage', arguments: {
       'snapshot': Post(
-        imageUrl: documentSnapshot['image'],
-        postID: documentSnapshot.reference.id,
-        title: documentSnapshot['name'],
-        description: documentSnapshot['description'],
-      ),
+          imageUrl: documentSnapshot['image'],
+          postID: documentSnapshot.reference.id,
+          title: documentSnapshot['name'],
+          description: documentSnapshot['description'],
+          comments: documentSnapshot['comment']),
     });
   }
 
@@ -555,7 +575,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void initializeUser() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = await auth.currentUser;
+    User? user = auth.currentUser;
 
     if (user != null) {
       setState(() {
@@ -566,10 +586,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final CollectionReference _posts =
       FirebaseFirestore.instance.collection('posts');
+  addToFavorite(String postId, int index) async {
+    print(widget.uid);
+    DocumentReference documentRef =
+        FirebaseFirestore.instance.collection("users").doc(widget.uid);
+    DocumentSnapshot snapshot = await documentRef.get();
+    List<dynamic> myList = snapshot['favorites'];
+    List<dynamic> updatedList = [...myList, postId];
+    documentRef.update({'favorites': updatedList});
+    setState(() {
+      isFavoriteList[index] = !isFavoriteList[index];
+    });
+    print('Heart button clicked');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // final List<DocumentSnapshot> postDocs = snapshot.data!.docs;
+
+      // final List<Map<String, dynamic>> posts = postDocs.map((doc) {
+      //   final data = doc.data() as Map<String, dynamic>;
+      //   return {
+      //     'id': data['id'],
+      //     'title': data['title'],
+      //     'imageURL': data['imageURL'],
+      //     'ratings' : data['ratings']
+      //   };
+      // }).toList();
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
@@ -583,10 +627,11 @@ class _HomeScreenState extends State<HomeScreen> {
           brightness: isDarkMode ? Brightness.dark : Brightness.light,
         ),
         child: StreamBuilder<QuerySnapshot>(
+          //nash
           stream: _posts.snapshots(),
-          builder: (context, streamSnapshot) {
-            if (streamSnapshot.hasData) {
-              final QuerySnapshot documentSnapshot = streamSnapshot.data!;
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final QuerySnapshot documentSnapshot = snapshot.data!;
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -595,8 +640,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(top: 40, left: 20),
                       child: Row(
                         children: [
-                          const Icon(Icons.search,
-                              size: 30, color: Colors.white),
+                          // IconButton(
+                          //   onPressed: () {},
+                          //   icon: const Icon(Icons.search),
+                          // ),
+                          // SizedBox(
+                          //   height: 30,
+                          //   width: 200,
+                          //   child: TextField(
+                          //     decoration: InputDecoration(
+                          //         prefixIcon: Icon(Icons.search),
+                          //         hintText: 'search by category...'),
+                          //     onChanged: (val) {
+                          //       setState(() {
+                          //         cat = val;
+                          //       });
+                          //     },
+                          //   ),
+                          // ),
                           Expanded(
                             child: Container(),
                           ),
@@ -645,31 +706,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 120,
                       width: double.maxFinite,
                       margin: const EdgeInsets.only(left: 20),
-                      child: ListView.builder(
-                        itemCount: 6,
+                      child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        itemBuilder: (_, index) {
-                          return Column(
-                            children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.only(right: 50, top: 10),
-                                width: 147,
-                                height: 29,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.white,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    documentSnapshot.docs[index]['category'],
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              )
-                            ],
-                          );
-                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: strs
+                                .map((category) => FilterChip(
+                                    selected: _activeChips.contains(category),
+                                    label: Text(category),
+                                    onSelected: (selected) {
+                                      setState(() {
+                                        if (selected) {
+                                          _activeChips.add(category);
+                                        } else {
+                                          _activeChips.remove(category);
+                                        }
+                                      });
+                                    }))
+                                .toList()),
                       ),
                     ),
                     const SizedBox(
@@ -703,19 +757,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: double.maxFinite,
                       margin: const EdgeInsets.only(left: 20),
                       child: ListView.builder(
-                        itemCount: streamSnapshot.data!.docs.length,
+                        itemCount: snapshot.data!.docs.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           final DocumentSnapshot documentSnapshot =
-                              streamSnapshot.data!.docs[index];
+                              snapshot.data!.docs[index];
                           num avgRating = 0;
                           for (num i = 0;
                               i < documentSnapshot['rating'].length;
                               i++) {
                             avgRating += documentSnapshot['rating'][i];
                           }
-
-                          // Add this line to initialize isFavorite for each post
                           if (isFavoriteList.length <= index) {
                             isFavoriteList.add(false);
                           }
@@ -737,8 +789,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: Colors.white,
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                        documentSnapshot['image']
-                                            .replaceAll("\n", ""),
+                                        documentSnapshot['image'],
                                       ),
                                       fit: BoxFit.cover,
                                     ),
@@ -750,32 +801,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           GestureDetector(
-                                            onTap: () {
-                                              addToFavorite(
-                                                  String postId) async {
-                                                print(widget.uid);
-                                                DocumentReference documentRef =
-                                                    FirebaseFirestore.instance
-                                                        .collection("users")
-                                                        .doc(widget.uid);
-                                                DocumentSnapshot snapshot =
-                                                    await documentRef.get();
-                                                List<dynamic> myList =
-                                                    snapshot['favorites'];
-                                                List<dynamic> updatedList = [
-                                                  ...myList,
-                                                  postId
-                                                ];
-                                                documentRef.update(
-                                                    {'favorites': updatedList});
-                                              }
-
-                                              setState(() {
-                                                isFavoriteList[index] =
-                                                    !isFavoriteList[index];
-                                              });
-                                              print('Heart button clicked');
-                                            },
+                                            onTap: () => addToFavorite(
+                                                documentSnapshot.id, index),
                                             child: Container(
                                               child: Align(
                                                 alignment: Alignment.topLeft,
@@ -791,7 +818,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ),
                                           Container(
-                                            padding: EdgeInsets.all(10),
+                                            padding: const EdgeInsets.all(10),
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               borderRadius:
@@ -809,14 +836,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   'rating']
                                                               .length)
                                                       .toStringAsFixed(1),
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                SizedBox(width: 1),
-                                                Icon(
+                                                const SizedBox(width: 1),
+                                                const Icon(
                                                   Icons.star,
                                                   color: Colors.yellow,
                                                 ),
@@ -851,162 +878,232 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 100),
+
+                    //NASH
                     Container(
                       height: 300,
                       width: double.maxFinite,
                       margin: const EdgeInsets.only(left: 20),
                       child: ListView.builder(
-                        itemCount: streamSnapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          final DocumentSnapshot documentSnapshot =
-                              streamSnapshot.data!.docs[index];
-                          num avgRating = 0;
-                          for (num i = 0;
-                              i < documentSnapshot['rating'].length;
-                              i++) {
-                            avgRating += documentSnapshot['rating'][i];
-                          }
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            final DocumentSnapshot documentSnapshot =
+                                snapshot.data!.docs[index];
+                            num avgRating = 0;
+                            for (num i = 0;
+                                i < documentSnapshot['rating'].length;
+                                i++) {
+                              avgRating += documentSnapshot['rating'][i];
+                            }
+                            if (isFavoriteList.length <= index) {
+                              isFavoriteList.add(false);
+                            }
 
-                          return GestureDetector(
-                            onTap: () =>
-                                navigateToPage(context, documentSnapshot),
-                            child: Center(
-                              child: Column(
+                            if (_activeChips.isEmpty) {
+                              return Column(
                                 children: [
                                   Container(
-                                    margin:
-                                        EdgeInsets.only(top: 10, bottom: 10),
-                                    width: 300,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    margin: const EdgeInsets.only(
+                                        right: 50, top: 10),
+                                    width: 364,
                                     height: 364,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(30),
                                       color: Colors.white,
                                       image: DecorationImage(
-                                        image: NetworkImage(
-                                          documentSnapshot['image'],
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
+                                          image: NetworkImage(
+                                              documentSnapshot['image']),
+                                          fit: BoxFit.cover),
                                     ),
                                     child: Column(
                                       children: [
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            GestureDetector(
-                                              onTap: () {
-                                                addToFavorite(
-                                                    String postId) async {
-                                                  print(widget.uid);
-                                                  DocumentReference
-                                                      documentRef =
-                                                      FirebaseFirestore.instance
-                                                          .collection("users")
-                                                          .doc(widget.uid);
-                                                  DocumentSnapshot snapshot =
-                                                      await documentRef.get();
-                                                  List<dynamic> myList =
-                                                      snapshot['favorites'];
-                                                  List<dynamic> updatedList = [
-                                                    ...myList,
-                                                    postId
-                                                  ];
-                                                  documentRef.update({
-                                                    'favorites': updatedList
-                                                  });
-                                                }
-
-                                                setState(() {
-                                                  isFavoriteList[index] =
-                                                      !isFavoriteList[index];
-                                                });
-                                                print('Heart button clicked');
-                                              },
-                                              child: Container(
-                                                child: Align(
-                                                  alignment: Alignment.topLeft,
-                                                  child: Icon(
-                                                    isFavoriteList[index]
-                                                        ? Icons.favorite
-                                                        : Icons.favorite_border,
-                                                    color: isFavoriteList[index]
-                                                        ? Colors.redAccent
-                                                        : null,
-                                                  ),
-                                                ),
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Container(
+                                                child: const Align(
+                                                    alignment:
+                                                        Alignment.topLeft,
+                                                    child: Icon(
+                                                        Icons.favorite_border,
+                                                        color:
+                                                            Colors.redAccent)),
                                               ),
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.all(10),
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                color: Colors.grey
-                                                    .withOpacity(0.5),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    (avgRating /
-                                                            documentSnapshot[
-                                                                    'rating']
-                                                                .length)
-                                                        .toStringAsFixed(1),
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                              Container(
+                                                  padding: EdgeInsets.all(10),
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: Colors.grey
+                                                        .withOpacity(0.5),
                                                   ),
-                                                  SizedBox(width: 1),
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.yellow,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                                  child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                            (avgRating /
+                                                                    documentSnapshot[
+                                                                            'rating']
+                                                                        .length)
+                                                                .toStringAsFixed(
+                                                                    1),
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            )),
+                                                        SizedBox(width: 1),
+                                                        Icon(Icons.star,
+                                                            color:
+                                                                Colors.yellow)
+                                                      ])),
+                                            ]),
                                         Expanded(
                                           child: Align(
-                                            alignment:
-                                                FractionalOffset.bottomCenter,
-                                            child: Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 10.0),
-                                              child: Text(
-                                                documentSnapshot['name'],
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
+                                              alignment:
+                                                  FractionalOffset.bottomCenter,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 50.0),
+                                                child: Text(
+                                                    documentSnapshot[
+                                                        'description'],
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.white)),
+                                              )),
                                         ),
                                       ],
                                     ),
                                   ),
+                                  // Icon(Icons.favorite_border, color: Colors.redAccent),
                                 ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                              );
+                              //other condition
+                            } else {
+                              // return ListView.builder(
+                              //     itemCount: snapshot.data!.docs.length,
+                              //     itemBuilder: (context, index) {
+                              //       final DocumentSnapshot documentSnapshot =
+                              //           snapshot.data!.docs[index];
+                              print('hiiiiii');
+                              print(documentSnapshot[index]);
+                              if (_activeChips
+                                  .contains(documentSnapshot['category'])) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
+                                      margin: const EdgeInsets.only(
+                                          right: 50, top: 10),
+                                      width: 364,
+                                      height: 364,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: Colors.white,
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                                documentSnapshot['image']),
+                                            fit: BoxFit.cover),
+                                      ),
+                                      // child: Column(
+                                      //   children: [
+                                      //     Row(
+                                      //         mainAxisAlignment:
+                                      //             MainAxisAlignment
+                                      //                 .spaceBetween,
+                                      //         children: <Widget>[
+                                      //           Container(
+                                      //             child: const Align(
+                                      //                 alignment:
+                                      //                     Alignment.topLeft,
+                                      //                 child: Icon(
+                                      //                     Icons.favorite_border,
+                                      //                     color: Colors
+                                      //                         .redAccent)),
+                                      //           ),
+                                      //           Container(
+                                      //               padding: EdgeInsets.all(10),
+                                      //               alignment: Alignment.center,
+                                      //               decoration: BoxDecoration(
+                                      //                 borderRadius:
+                                      //                     BorderRadius.circular(
+                                      //                         10),
+                                      //                 color: Colors.grey
+                                      //                     .withOpacity(0.5),
+                                      //               ),
+                                      //               child: Row(
+                                      //                   mainAxisAlignment:
+                                      //                       MainAxisAlignment
+                                      //                           .center,
+                                      //                   children: [
+                                      //                     Text(
+                                      //                         documentSnapshot[
+                                      //                                 'rating']
+                                      //                             .toString(),
+                                      //                         style: TextStyle(
+                                      //                           color: Colors
+                                      //                               .white,
+                                      //                           fontSize: 20,
+                                      //                           fontWeight:
+                                      //                               FontWeight
+                                      //                                   .bold,
+                                      //                         )),
+                                      //                     SizedBox(width: 1),
+                                      //                     Icon(Icons.star,
+                                      //                         color:
+                                      //                             Colors.yellow)
+                                      //                   ])),
+                                      //         ]),
+                                      //     Expanded(
+                                      //       child: Align(
+                                      //           alignment: FractionalOffset
+                                      //               .bottomCenter,
+                                      //           child: Padding(
+                                      //             padding:
+                                      //                 const EdgeInsets.only(
+                                      //                     bottom: 50.0),
+                                      //             child: Text(
+                                      //                 documentSnapshot[
+                                      //                     'description'],
+                                      //                 style: const TextStyle(
+                                      //                     fontSize: 20,
+                                      //                     color: Colors.white)),
+                                      //           )),
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                    ),
+                                    // Icon(Icons.favorite_border, color: Colors.redAccent),
+                                  ],
+                                );
+                              } else {
+                                return Container();
+                              }
+
+                              // });
+                            }
+                          }),
                     ),
-                    const SizedBox(height: 100),
                   ],
                 ),
               );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
             } else {
-              return const Center(child: CircularProgressIndicator());
+              return const CircularProgressIndicator();
             }
           },
         ),

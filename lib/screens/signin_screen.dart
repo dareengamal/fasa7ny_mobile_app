@@ -21,7 +21,7 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-      
+
 //       body: Container(
 //         width: MediaQuery.of(context).size.width,
 //         height: MediaQuery.of(context).size.height,
@@ -99,7 +99,6 @@
 //       ],
 //     );
 //   }
-  
 
 //   Widget forgetPassword(BuildContext context) {
 //     return Container(
@@ -119,7 +118,6 @@
 //   }
 // }
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fasa7ny/screens/reset_password.dart';
 import 'package:fasa7ny/screens/service/idProvider.dart';
@@ -130,7 +128,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/colors_utils.dart';
-
 
 import 'package:fasa7ny/utils/colors_utils.dart';
 import 'package:flutter/material.dart';
@@ -219,6 +216,12 @@ class _SignInScreenState extends State<SignInScreen> {
                       final snackBar = SnackBar(
                         content: Text(
                             "YOU HAVE EXCEEDED NUMBER OF ATTEMPTS TRY AGAIN LATER"),
+                        backgroundColor: Colors.amber,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      final snackBar = SnackBar(
+                        content: Text("PLEASE CHECK YOUR INTERNET CONNECTION!"),
                         backgroundColor: Colors.amber,
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
