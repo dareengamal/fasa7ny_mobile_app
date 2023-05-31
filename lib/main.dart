@@ -9,7 +9,6 @@
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:provider/provider.dart';
 
-
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
 //   await Firebase.initializeApp(
@@ -49,13 +48,11 @@
 //   }
 // }
 
-
-
-
 import 'package:fasa7ny/screens/favorite.dart';
 import 'package:fasa7ny/screens/homePage.dart';
 import 'package:fasa7ny/screens/home_Screen.dart';
 import 'package:fasa7ny/screens/profile.dart';
+import 'package:fasa7ny/screens/profile_provider.dart';
 import 'package:fasa7ny/screens/service/idProvider.dart';
 import 'package:fasa7ny/screens/signin_screen.dart';
 import 'package:fasa7ny/screens/signup_screen.dart';
@@ -91,8 +88,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsFlutterBinding.ensureInitialized();
-    return ChangeNotifierProvider(
-      create: (context) => IdProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => IdProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => ProfileProvider(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

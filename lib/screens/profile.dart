@@ -1,13 +1,12 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fasa7ny/screens/profile_provider.dart';
 import 'package:fasa7ny/screens/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
-import 'package:fasa7ny/ThemeProvider.dart';
+
 import 'package:provider/provider.dart';
 import '../utils/colors_utils.dart';
 
@@ -17,7 +16,6 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  
   File? _image;
 
   final _formKey = GlobalKey<FormState>();
@@ -42,38 +40,37 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-Future<void> _uploadImageAndUpdateProfile(ProfileProvider profileProvider) async {
-  if (_formKey.currentState!.validate()) {
-    final newName = _nameController.text;
-    final newBio = _bioController.text;
+  Future<void> _uploadImageAndUpdateProfile(
+      ProfileProvider profileProvider) async {
+    if (_formKey.currentState!.validate()) {
+      final newName = _nameController.text;
+      final newBio = _bioController.text;
 
-    // Upload the image to Firebase Storage
-    if (_image != null) {
-      final storageRef = firebase_storage.FirebaseStorage.instance
-          .ref()
-          .child('profile_images')
-          .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
-      final uploadTask = storageRef.putFile(_image!);
-      final snapshot = await uploadTask.whenComplete(() {});
-      final downloadURL = await snapshot.ref.getDownloadURL();
+      // Upload the image to Firebase Storage
+      if (_image != null) {
+        final storageRef = firebase_storage.FirebaseStorage.instance
+            .ref()
+            .child('profile_images')
+            .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+        final uploadTask = storageRef.putFile(_image!);
+        final snapshot = await uploadTask.whenComplete(() {});
+        final downloadURL = await snapshot.ref.getDownloadURL();
 
-      // Update the profile info with the uploaded image URL
-      profileProvider.updateProfile(newName, newBio, downloadURL);
-    } else {
-      // Update the profile info without changing the image
-      profileProvider.updateProfile(newName, newBio, ''); // Pass an empty string
+        // Update the profile info with the uploaded image URL
+        profileProvider.updateProfile(newName, newBio, downloadURL);
+      } else {
+        // Update the profile info without changing the image
+        profileProvider.updateProfile(
+            newName, newBio, ''); // Pass an empty string
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Profile updated successfully.'),
+        ),
+      );
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Profile updated successfully.'),
-      ),
-    );
   }
-}
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +78,6 @@ Future<void> _uploadImageAndUpdateProfile(ProfileProvider profileProvider) async
     final userName = profileProvider.userName;
     final userBio = profileProvider.userBio;
     final profilePictureUrl = profileProvider.profilePictureUrl;
-
 
     final color1 = hexStringToColor("E59400");
     final color2 = hexStringToColor("C37F00");
@@ -92,9 +88,9 @@ Future<void> _uploadImageAndUpdateProfile(ProfileProvider profileProvider) async
       0.5,
     );
     return Scaffold(
-     backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-         backgroundColor: backgroundColor,
+        backgroundColor: backgroundColor,
         actions: [
           IconButton(
             onPressed: _logout,
@@ -112,7 +108,9 @@ Future<void> _uploadImageAndUpdateProfile(ProfileProvider profileProvider) async
                 child: CircleAvatar(
                   radius: 48,
                   backgroundImage: _image != null ? FileImage(_image!) : null,
-                  child: _image == null ? Icon(Icons.account_circle, size: 96) : null,
+                  child: _image == null
+                      ? Icon(Icons.account_circle, size: 96)
+                      : null,
                 ),
               ),
               SizedBox(height: 10),
@@ -148,7 +146,8 @@ Future<void> _uploadImageAndUpdateProfile(ProfileProvider profileProvider) async
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () => _uploadImageAndUpdateProfile(profileProvider),
+                      onPressed: () =>
+                          _uploadImageAndUpdateProfile(profileProvider),
                       child: Text('Update Profile'),
                     ),
                   ],

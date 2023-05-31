@@ -16,12 +16,13 @@
 
 //   }
 // }
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fasa7ny/screens/service/idProvider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'dart:convert';
 
+import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PostScreen extends StatefulWidget {
@@ -108,7 +109,7 @@ class _PostScreenState extends State<PostScreen> {
                       backgroundColor: const Color.fromARGB(
                           255, 250, 174, 120), // Background color
                     ),
-                    child:  Row(
+                    child: Row(
                       children: [
                         Icon(Icons.image),
                         Text(' Gallery'),
@@ -138,6 +139,7 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider = Provider.of<IdProvider>(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 180, 109, 58),
       body: Center(
@@ -265,11 +267,14 @@ class _PostScreenState extends State<PostScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     debugPrint('ElevatedButton Clicked');
-                    Map<String, String> data = {
+                    Map<String, dynamic> data = {
                       "name": name.text,
                       "description": description.text,
                       "category": dropdownValue,
                       "image": image!.path,
+                      "rating": [0],
+                      "coment": [],
+                      'user': profileProvider.uid
                       // "rating" : int(),
                     };
                     FirebaseFirestore.instance.collection('posts').add(data);
