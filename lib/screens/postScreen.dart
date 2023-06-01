@@ -181,7 +181,7 @@ class _PostScreenState extends State<PostScreen> {
         backgroundColor: Colors.red,
         isDarkMode: false,
       ),
-      backgroundColor: const Color.fromARGB(255, 180, 109, 58),
+      backgroundColor: hexStringToColor("E59400"),
       body: Center(
         child: SingleChildScrollView(
           child: Column(

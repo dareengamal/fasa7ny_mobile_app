@@ -54,7 +54,7 @@ class _ProfileState extends State<Profile> {
   Future<dynamic> getImages(int index) async {
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
-      User? user = await auth.currentUser;
+      dynamic user = await auth.currentUser ?? "";
 
       final DocumentReference _users =
           FirebaseFirestore.instance.collection('users').doc(user!.uid);
@@ -150,9 +150,9 @@ class _ProfileState extends State<Profile> {
         backgroundColor: Colors.red,
         isDarkMode: false,
       ),
-      backgroundColor: backgroundColor,
+      backgroundColor: hexStringToColor("E59400"),
       appBar: AppBar(
-        backgroundColor: backgroundColor,
+        backgroundColor: hexStringToColor("E59400"),
         actions: [
           IconButton(
             onPressed: _logout,
@@ -161,16 +161,7 @@ class _ProfileState extends State<Profile> {
         ],
       ),
       body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                hexStringToColor("E59400"),
-                hexStringToColor("FFE5B4"),
-                hexStringToColor("C37F00"),
-              ],
-            ),
-          ),
-          child: user!.uid != Null
+          child: user != ""
               ? SingleChildScrollView(
                   child: Center(
                     child: Column(
@@ -241,24 +232,11 @@ class _ProfileState extends State<Profile> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                Text("2"),
-                                Text("Posts"),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
                         SizedBox(
                           height: 300,
                           child: Expanded(
                             child: ListView.builder(
-                              itemCount: 5,
+                              itemCount: 0,
                               itemBuilder: (context, index) {
                                 if (getImages(index) != null &&
                                     getImages(index) != 'error') {

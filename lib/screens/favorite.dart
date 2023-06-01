@@ -228,131 +228,115 @@ class _FavoriteState extends State<FavoriteScreen> {
 
   Widget build(BuildContext context) {
     FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = auth.currentUser;
+    dynamic user = auth.currentUser ?? "";
     return Scaffold(
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        backgroundColor: Colors.red,
-        isDarkMode: false,
-      ),
-      backgroundColor: Colors.white,
-      body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                hexStringToColor("E59400"),
-                hexStringToColor("FFE5B4"),
-                hexStringToColor("C37F00"),
-              ],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
-          child: user!.uid != Null
-              ? SafeArea(
-                  child: Theme(
-                    data: ThemeData.dark(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: Text(
-                                    'FASA7NY',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+        bottomNavigationBar: BottomNavBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          backgroundColor: Colors.red,
+          isDarkMode: false,
+        ),
+        backgroundColor: hexStringToColor("E59400"),
+        body: Container(
+            child: user != ""
+                ? SafeArea(
+                    child: Theme(
+                      data: ThemeData.dark(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      'FASA7NY',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
+                                IconButton(
+                                  icon: Icon(Icons.account_circle),
+                                  onPressed: () {
+                                    // TODO: Implement profile icon functionality
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                'Favourite Destinations',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
-                              IconButton(
-                                icon: Icon(Icons.account_circle),
-                                onPressed: () {
-                                  // TODO: Implement profile icon functionality
+                            ),
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: ListView.builder(
+                                itemCount: 3,
+                                itemBuilder: (context, index) {
+                                  if (getImages(index) != 'error' ||
+                                      getImages(index) != Null) {
+                                    return FutureBuilder(
+                                      future: getImages(index),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<dynamic> snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Center(
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 10,
+                                              ),
+                                              margin: const EdgeInsets.only(
+                                                left: 5,
+                                                top: 10,
+                                                bottom: 10,
+                                              ),
+                                              width: 331,
+                                              height: 344,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                color: Colors.white,
+                                                image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      snapshot.data),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
                                 },
                               ),
-                            ],
-                          ),
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              'Favourite Destinations',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: ListView.builder(
-                              itemCount: 1,
-                              itemBuilder: (context, index) {
-                                if (getImages(index) != 'error' ||
-                                    getImages(index) != Null) {
-                                  return FutureBuilder(
-                                    future: getImages(index),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<dynamic> snapshot) {
-                                      if (snapshot.hasData) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 10,
-                                          ),
-                                          margin: const EdgeInsets.only(
-                                            left: 5,
-                                            top: 10,
-                                            bottom: 10,
-                                          ),
-                                          width: 231,
-                                          height: 364,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                            color: Colors.white,
-                                            image: DecorationImage(
-                                              image:
-                                                  NetworkImage(snapshot.data),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        );
-                                      } else {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
-                                    },
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              : AlertDialog(
-                  title: Text(
-                    "You have to sign in !",
-                  ),
-                  content: Text(
-                    "You have to sign in !",
-                  ),
-                )),
-    );
+                  )
+                : Container()));
   }
 }
